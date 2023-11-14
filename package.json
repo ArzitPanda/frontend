@@ -8,6 +8,7 @@
     "post-update": "yarn upgrade --latest"
   },
   "dependencies": {
+    "axios": "1.6.1",
     "next": "^13.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -16,5 +17,10 @@
   "keywords": [
     "next"
   ],
-  "description": "A \"Hello World\" application with multiple pages that shows how Next.js routing works."
+  "description": "A \"Hello World\" application with multiple pages that shows how Next.js routing works.",
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.5"
+  }
 }
