@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { backend_url } from "../URL";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 
-const Task = ({ task, onStatusChange }) => {
+const Task = ({ task, onStatusChange, list, setList }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState({ ...task });
 
@@ -10,23 +11,9 @@ const Task = ({ task, onStatusChange }) => {
     onStatusChange(newStatus);
   };
 
-  const handleEditClick = async () => {
+  const handleEditClick = () => {
     setEditedTask({ ...task });
     setIsEditing(true);
-    await axios.put(backend_url + "/task/" + task._id, editedTask, {
-      headers: {
-        'Authorization': localStorage.getItem("authorization")
-      }
-    })
-      .then((res) => {
-          console.log(res)
-        // Logic to handle successful update
-        setIsEditing(false);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-   
   };
 
   const handleModalClose = () => {
@@ -34,10 +21,51 @@ const Task = ({ task, onStatusChange }) => {
   };
 
   const handleSaveChanges = () => {
-    // Here you can implement the logic to save the changes,
-    // such as updating the task on the server or performing any necessary actions.
-    // For now, let's just close the modal.
-    setIsEditing(false);
+    axios
+      .put(backend_url + "/task/" + task._id, editedTask, {
+        headers: {
+          Authorization: localStorage.getItem("authorization"),
+        },
+      })
+      .then((res) => {
+        console.log(res);
+        const updatedTask = res.data.task;
+        const newList = list.map((ele) => {
+          if (ele._id === task._id) {
+            return { ...updatedTask };
+          }
+          return ele;
+        });
+        setList(newList);
+
+        // Logic to handle successful update
+        setIsEditing(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // setIsEditing(false);
+  };
+
+  const handleDeleteTask = () => {
+    axios
+      .delete(backend_url + "/task/" + task._id, {
+        headers: {
+          Authorization: localStorage.getItem("authorization"),
+        },
+      })
+      .then((res) => {
+        console.log(res);
+
+        const newList = list.filter((ele) => ele._id !== task._id);
+        setList(newList);
+        setIsEditing(false);
+
+        // Logic to handle successful update
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -111,19 +139,29 @@ const Task = ({ task, onStatusChange }) => {
               <option value="Medium">Medium</option>
               <option value="High">High</option>
             </select>
-            <div className="flex justify-end">
-              <button
-                onClick={handleModalClose}
-                className="mr-2 px-3 py-1 bg-gray-400 text-white rounded-md hover:bg-gray-500 transition duration-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveChanges}
-                className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                Save Changes
-              </button>
+            <div className="flex items-center justify-between">
+              <div>
+                <RiDeleteBin6Fill
+                  size={20}
+                  color="red"
+                  className="cursor-pointer"
+                  onClick={handleDeleteTask}
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  onClick={handleModalClose}
+                  className="mr-2 px-3 py-1 bg-gray-400 text-white rounded-md hover:bg-gray-500 transition duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveChanges}
+                  className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
+                >
+                  Save Changes
+                </button>
+              </div>
             </div>
           </div>
         </div>

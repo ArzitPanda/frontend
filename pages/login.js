@@ -9,23 +9,13 @@ import { useRouter } from "next/router";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter()
+  const router = useRouter();
 
-
-  useEffect(()=>{
-
-
-    if(localStorage.getItem("authorization").length !==0)
-    {
-      router.push("/")
-  
+  useEffect(() => {
+    if (localStorage.getItem("authorization")) {
+      router.push("/");
     }
-  
-  
-  
-  
-  },[])
-
+  }, []);
 
   const loginHandler = async () => {
     if (username && password) {
@@ -35,9 +25,8 @@ const Login = () => {
           password,
         });
 
-        localStorage.setItem("authorization",data.data?.token || "")
-        if(data.data?.token)
-        {
+        localStorage.setItem("authorization", data.data?.token || "");
+        if (data.data?.token) {
           router.push("/");
         }
       } catch (error) {
