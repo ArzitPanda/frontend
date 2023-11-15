@@ -1,23 +1,45 @@
 // Login.js
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { backend_url } from "../URL";
+import { useRouter } from "next/router";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter()
+
+
+  useEffect(()=>{
+
+
+    if(localStorage.getItem("authorization").length !==0)
+    {
+      router.push("/")
+  
+    }
+  
+  
+  
+  
+  },[])
+
 
   const loginHandler = async () => {
     if (username && password) {
       try {
-        const token = await axios.post(backend_url + "/auth/login", {
+        const data = await axios.post(backend_url + "/auth/login", {
           username,
           password,
         });
 
-        console.log(token);
+        localStorage.setItem("authorization",data.data?.token || "")
+        if(data.data?.token)
+        {
+          router.push("/");
+        }
       } catch (error) {
         console.log(error);
         alert(error.toString());

@@ -1,1 +1,1 @@
-export const backend_url = "https://wgh5vm-3020.csb.app";
+export const backend_url = "http://localhost:3020";

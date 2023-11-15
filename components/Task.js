@@ -1,4 +1,6 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { backend_url } from "../URL";
 
 const Task = ({ task, onStatusChange }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -8,9 +10,23 @@ const Task = ({ task, onStatusChange }) => {
     onStatusChange(newStatus);
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = async () => {
     setEditedTask({ ...task });
     setIsEditing(true);
+    await axios.put(backend_url + "/task/" + task._id, editedTask, {
+      headers: {
+        'Authorization': localStorage.getItem("authorization")
+      }
+    })
+      .then((res) => {
+          console.log(res)
+        // Logic to handle successful update
+        setIsEditing(false);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+   
   };
 
   const handleModalClose = () => {
